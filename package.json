@@ -7,6 +7,7 @@
     "start": "node dist/server.js",
     "dev": "nodemon src/server.ts",
     "chat": "ts-node src/scripts/cmd-chat.ts",
+    "ingest-web": "ts-node src/scripts/ingest-web.ts",
     "build": "tsc"
   },
   "keywords": [],
@@ -23,6 +24,7 @@
     "express": "^4.19.2",
     "langchain": "^0.1.37",
     "pdf-parse": "^1.1.1",
+    "puppeteer": "^19.11.1",
     "uuid": "^13.0.0",
     "zod": "^3.23.8"
   },

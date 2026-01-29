@@ -23,13 +23,19 @@ export class LangChainService {
     async generateResponse(history: any[], userMessage: string): Promise<string> {
         // RAG Implementation
         // 1. Retrieve context
-        const vectorStore = new VectorStoreService();
-        // Retrieval could be empty if not ingested yet, handling that gracefully
+        const vectorStore = new VectorStoreService("kcg-knowledge-base");
+        const webVectorStore = new VectorStoreService("kcg-web-content");
+
         let context = "";
         try {
-            const relevantDocs = await vectorStore.similaritySearch(userMessage, 3);
-            context = relevantDocs.map(doc => doc.pageContent).join("\n\n");
-            console.log("Context found:", relevantDocs.length);
+            const [pdfDocs, webDocs] = await Promise.all([
+                vectorStore.similaritySearch(userMessage, 3),
+                webVectorStore.similaritySearch(userMessage, 3)
+            ]);
+
+            const allDocs = [...pdfDocs, ...webDocs];
+            context = allDocs.map(doc => doc.pageContent).join("\n\n");
+            console.log("Context found:", allDocs.length);
         } catch (e) {
             console.log("Vector store not ready or connection failed, proceeding without context.");
         }

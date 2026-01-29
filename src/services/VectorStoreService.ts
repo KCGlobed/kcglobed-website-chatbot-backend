@@ -7,9 +7,10 @@ dotenv.config();
 export class VectorStoreService {
     private vectorStore: Chroma | null = null;
     private embeddings: OpenAIEmbeddings;
-    private collectionName = "kcg-knowledge-base";
+    private collectionName: string;
 
-    constructor() {
+    constructor(collectionName: string = "kcg-knowledge-base") {
+        this.collectionName = collectionName;
         this.embeddings = new OpenAIEmbeddings({
             modelName: "text-embedding-3-small",
         });

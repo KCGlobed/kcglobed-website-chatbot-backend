@@ -25,10 +25,19 @@ export class App {
 
     private routes(): void {
         this.app.post('/api/chat', this.chatController.handleChat);
-
-        // Health check
         this.app.get('/health', (req, res) => {
-            res.send('KC GlobEd Bot Backend is running!');
+            res.status(200).json({
+                status: 'UP',
+                timestamp: new Date().toISOString(),
+                uptime: process.uptime(),
+                memoryUsage: process.memoryUsage(),
+                system: {
+                    nodeVersion: process.version,
+                    platform: process.platform,
+                    arch: process.arch,
+                    pid: process.pid
+                }
+            });
         });
     }
 }

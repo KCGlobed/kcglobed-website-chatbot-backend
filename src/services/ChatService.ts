@@ -1,12 +1,16 @@
 import { LangChainService } from "./LangChainService";
 import { UserSession, ChatRequest, ChatResponse, Message } from "../models/ConversationState";
 
+import { DatabaseService } from "./DatabaseService";
+
 export class ChatService {
     private langChainService: LangChainService;
+    private dbService: DatabaseService;
     private sessions: Map<string, UserSession>;
 
     constructor() {
         this.langChainService = new LangChainService();
+        this.dbService = new DatabaseService();
         this.sessions = new Map();
     }
 
@@ -37,7 +41,7 @@ export class ChatService {
 
         if (session.stage === 'DATA_COLLECTION') {
             session.messages.push({ role: 'user', content: messageText })
-            const askDataMsg = "Before we proceed, please enter your name and a valid phone number.";
+            const askDataMsg = "Before we proceed, please enter your Name and Phone Number (e.g., John Doe, 9876543210).";
             session.messages.push({ role: 'assistant', content: askDataMsg });
             session.stage = 'WAITING_FOR_DATA';
             return { message: askDataMsg };
@@ -45,17 +49,39 @@ export class ChatService {
 
         if (session.stage === 'WAITING_FOR_DATA') {
             session.messages.push({ role: 'user', content: messageText });
-            session.userData = { name: messageText.split(' ')[0], phoneNumber: messageText };
-            const uniqueOptions = ["Explore Courses", "Apply for Admission", "Access LMS / Student Login", "Talk to a counsellor", "Ask a Question"];
-            const msg = "Thanks! Please select an option below:";
 
-            session.messages.push({ role: 'assistant', content: msg, options: uniqueOptions });
-            session.stage = 'IDENTIFICATION';
+            // VALIDATION LOGIC
+            // Simple heuristic to extract phone and name
+            // Looking for a sequence of digits for phone
+            const phoneMatch = messageText.match(/\b\d{10,}\b/);
 
-            return {
-                message: msg,
-                options: uniqueOptions
-            };
+            // Assume the part that isn't the phone number is the name
+            const namePart = messageText.replace(/\b\d{10,}\b/, '').replace(/[^a-zA-Z\s]/g, '').trim();
+
+            if (phoneMatch && namePart.length > 2) {
+                const phoneNumber = phoneMatch[0];
+                const name = namePart;
+
+                session.userData = { name, phoneNumber };
+
+                // Store in DB
+                await this.dbService.saveUser(name, phoneNumber);
+
+                const uniqueOptions = ["Explore Courses", "Apply for Admission", "Access LMS / Student Login", "Talk to a counsellor", "Ask a Question"];
+                const msg = `Thanks ${name}! Please select an option below:`;
+
+                session.messages.push({ role: 'assistant', content: msg, options: uniqueOptions });
+                session.stage = 'IDENTIFICATION';
+
+                return {
+                    message: msg,
+                    options: uniqueOptions
+                };
+            } else {
+                const errorMsg = "Please provide a valid Name (at least 3 letters) and a Phone Number (at least 10 digits).";
+                session.messages.push({ role: 'assistant', content: errorMsg });
+                return { message: errorMsg };
+            }
         }
 
         if (session.stage === 'IDENTIFICATION') {

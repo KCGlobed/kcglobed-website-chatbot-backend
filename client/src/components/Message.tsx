@@ -10,11 +10,17 @@ interface MessageProps {
     content: string;
     options?: string[];
     onOptionClick?: (option: string) => void;
+    onContentUpdate?: () => void;
 }
 
-export const Message: React.FC<MessageProps> = ({ role, content, options, onOptionClick }) => {
+export const Message: React.FC<MessageProps> = ({ role, content, options, onOptionClick, onContentUpdate }) => {
     const isBot = role === 'assistant';
     const [displayedContent, setDisplayedContent] = useState(isBot ? '' : content);
+
+    const onContentUpdateRef = React.useRef(onContentUpdate);
+    useEffect(() => {
+        onContentUpdateRef.current = onContentUpdate;
+    }, [onContentUpdate]);
 
     // Typing effect for bot
     useEffect(() => {
@@ -31,8 +37,9 @@ export const Message: React.FC<MessageProps> = ({ role, content, options, onOpti
 
         const timer = setInterval(() => {
             if (index < content.length) {
-                setDisplayedContent((prev) => content.substring(0, index + 1));
+                setDisplayedContent(() => content.substring(0, index + 1));
                 index++;
+                onContentUpdateRef.current?.();
             } else {
                 clearInterval(timer);
             }

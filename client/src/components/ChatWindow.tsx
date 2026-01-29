@@ -42,9 +42,13 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ onClose }) => {
     }, []);
 
     // Auto scroll
-    useEffect(() => {
+    const scrollToBottom = React.useCallback(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [messages]);
+    }, []);
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages, scrollToBottom]);
 
     const sendMessage = async (text: string, currentSessionId = sessionId) => {
         if (!currentSessionId) return;
@@ -119,6 +123,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ onClose }) => {
                         content={msg.content}
                         options={msg.options}
                         onOptionClick={handleOptionClick}
+                        onContentUpdate={scrollToBottom}
                     />
                 ))}
                 {isLoading && (

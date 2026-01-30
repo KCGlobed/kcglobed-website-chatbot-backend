@@ -46,6 +46,11 @@ export class VectorStoreService {
         return await this.vectorStore!.similaritySearch(query, k);
     }
 
+    async similaritySearchWithScore(query: string, k: number = 3) {
+        if (!this.vectorStore) await this.init();
+        return await this.vectorStore!.similaritySearchWithScore(query, k);
+    }
+
     async getRetriever() {
         if (!this.vectorStore) await this.init();
         return this.vectorStore!.asRetriever();

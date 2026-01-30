@@ -105,8 +105,17 @@ export class ChatService {
         }
 
         session.messages.push({ role: 'user', content: messageText });
-        const aiResponse = await this.langChainService.generateResponse(session.messages, messageText);
+        const { content: aiResponse, confidence } = await this.langChainService.generateResponse(session.messages, messageText);
         session.messages.push({ role: 'assistant', content: aiResponse });
+
+        // Log the interaction
+        await this.dbService.logEvent("CHAT_RESPONSE", {
+            sessionId,
+            userMessage: messageText,
+            botMessage: aiResponse,
+            confidence,
+            userData: session.userData
+        });
 
         return { message: aiResponse };
     }

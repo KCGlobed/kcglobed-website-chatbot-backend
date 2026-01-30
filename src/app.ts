@@ -21,6 +21,25 @@ export class App {
         this.app.use(cors());
         this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({ extended: false }));
+
+        // Request Logger Middleware
+        this.app.use((req, res, next) => {
+            const startTime = Date.now();
+            const dbService = new (require('./services/DatabaseService').DatabaseService)(); // Lazy load to avoid circular dep issues if any, or just import
+
+            res.on("finish", () => {
+                const durationMs = Date.now() - startTime;
+                dbService.logEvent("HTTP_REQUEST", {
+                    method: req.method,
+                    route: req.originalUrl,
+                    status: res.statusCode,
+                    ip: req.ip,
+                    userAgent: req.headers["user-agent"],
+                    durationMs
+                });
+            });
+            next();
+        });
     }
 
     private routes(): void {

@@ -19,6 +19,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ onClose }) => {
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [sessionId, setSessionId] = useState('');
+    const inputRef = useRef<HTMLInputElement>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const hasInitialized = useRef(false);
@@ -50,8 +51,17 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ onClose }) => {
         scrollToBottom();
     }, [messages, scrollToBottom]);
 
+    // Auto focus input when loading finishes
+    useEffect(() => {
+        if (!isLoading) {
+            setTimeout(() => {
+                inputRef.current?.focus();
+            }, 100);
+        }
+    }, [isLoading]);
+
     const sendMessage = async (text: string, currentSessionId = sessionId) => {
-        if (!currentSessionId) return;
+        if (!currentSessionId || isLoading) return;
 
         // If text is empty, it might be initial trigger, don't show user bubble
         if (text.trim()) {
@@ -82,10 +92,13 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ onClose }) => {
     };
 
     const handleOptionClick = (option: string) => {
-        sendMessage(option);
+        if (!isLoading) {
+            sendMessage(option);
+        }
     };
 
     const handleReset = () => {
+        if (isLoading) return;
         const newSession = uuidv4();
         localStorage.setItem('kcg_chat_session', newSession);
         setSessionId(newSession);
@@ -141,16 +154,17 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ onClose }) => {
             {/* Input Area */}
             <div className="p-4 bg-white border-t border-gray-100 shrink-0 shadow-[0_-5px_15px_-5px_rgba(0,0,0,0.05)]">
                 <form
-                    onSubmit={(e) => { e.preventDefault(); sendMessage(input); }}
+                    onSubmit={(e) => { e.preventDefault(); if (!isLoading) sendMessage(input); }}
                     className="flex gap-2 relative"
                 >
                     <input
+                        ref={inputRef}
                         type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        placeholder="Type your question..."
+                        placeholder={isLoading ? "Please wait..." : "Type your question..."}
                         className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-kcg-blue/20 focus:border-kcg-blue transition-all placeholder:text-gray-400"
-                        disabled={isLoading}
+
                     />
                     <button
                         type="submit"

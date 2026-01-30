@@ -11,7 +11,7 @@ export class LangChainService {
 
     constructor() {
         this.chatModel = new ChatOpenAI({
-            modelName: "gpt-3.5-turbo",
+            modelName: "gpt-5.2",
             temperature: 0.7,
         });
 
@@ -20,30 +20,51 @@ export class LangChainService {
         });
     }
 
-    async generateResponse(history: any[], userMessage: string): Promise<string> {
-        // RAG Implementation
-        // 1. Retrieve context
+    async generateResponse(history: any[], userMessage: string): Promise<{ content: string, confidence: number }> {
         const vectorStore = new VectorStoreService("kcg-knowledge-base");
         const webVectorStore = new VectorStoreService("kcg-web-content");
 
         let context = "";
+        let avgScore = 0;
+
         try {
-            const [pdfDocs, webDocs] = await Promise.all([
-                vectorStore.similaritySearch(userMessage, 3),
-                webVectorStore.similaritySearch(userMessage, 3)
+            const [pdfResults, webResults] = await Promise.all([
+                vectorStore.similaritySearchWithScore(userMessage, 3),
+                webVectorStore.similaritySearchWithScore(userMessage, 3)
             ]);
 
-            const allDocs = [...pdfDocs, ...webDocs];
-            context = allDocs.map(doc => doc.pageContent).join("\n\n");
-            console.log("Context found:", allDocs.length);
+            const allResults = [...pdfResults, ...webResults];
+
+            allResults.sort((a, b) => a[1] - b[1]);
+
+            // Take top 5
+            const topResults = allResults.slice(0, 5);
+
+            context = topResults.map(res => res[0].pageContent).join("\n\n");
+
+            if (topResults.length > 0) {
+                const totalDistance = topResults.reduce((sum, res) => sum + res[1], 0);
+                const avgDistance = totalDistance / topResults.length;
+                avgScore = 1 / (1 + avgDistance);
+            }
+
+            console.log("Context found:", topResults.length);
         } catch (e) {
             console.log("Vector store not ready or connection failed, proceeding without context.");
         }
 
         const messages = [
             new SystemMessage(`You are KC GlobEd Bot, a helpful assistant for KC Globed. You help with courses, admissions, and LMS support.
+
+            Use the following context to answer the user's question.
             
-            Use the following context to answer the user's question. If the answer is not in the context, just say you don't know based on the provided information, or provide general helpful info if appropriate.
+            Important Instructions:
+            - **Multilingual Support**: Detect the language of the user's message and reply in the SAME language.
+            - **Moderation**: If the user uses abusive, offensive, or inappropriate language, strictly warn them to be respectful and DO NOT answer their query.
+            - Answer directly and professionally.
+            - Do NOT use phrases like "mentioned in the text", "according to the documents", or "as shared". 
+            - Speak as if you possess this knowledge naturally.
+            - If the answer is not in the context, just say you don't know based on the provided information, or provide general helpful info if appropriate.
             
             Context:
             ${context}
@@ -52,22 +73,30 @@ export class LangChainService {
             new HumanMessage(userMessage)
         ];
 
-        const response = await this.chatModel.invoke(messages as any);
+        try {
+            const response = await this.chatModel.invoke(messages as any);
+            let content = "";
 
-        if (typeof response.content === "string") {
-            return response.content;
-        } else if (Array.isArray(response.content)) {
-            return response.content
-                .map(part => {
-                    if (typeof part === "string") return part;
-                    if (part && typeof part === "object" && "text" in part) {
-                        return (part as any).text;
-                    }
-                    return "";
-                })
-                .join(" ");
+            if (typeof response.content === "string") {
+                content = response.content;
+            } else if (Array.isArray(response.content)) {
+                content = response.content
+                    .map(part => {
+                        if (typeof part === "string") return part;
+                        if (part && typeof part === "object" && "text" in part) {
+                            return (part as any).text;
+                        }
+                        return "";
+                    })
+                    .join(" ");
+            }
+
+            return { content, confidence: avgScore };
+
+        } catch (error) {
+            console.error("LLM Error:", error);
+            return { content: "I'm sorry, I encountered an error processing your request.", confidence: 0 };
         }
-        return "";
     }
 
     async getEmbedding(text: string): Promise<number[]> {

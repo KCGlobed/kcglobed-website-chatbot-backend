@@ -1,11 +1,11 @@
 export interface Message {
     role: 'user' | 'assistant' | 'system';
     content: string;
-    options?: string[]; // For buttons
+    options?: string[];
 }
 
 export interface UserSession {
-    id: string; // socket id, or random string
+    id: string;
     stage: 'GREETING' | 'DATA_COLLECTION' | 'WAITING_FOR_DATA' | 'IDENTIFICATION' | 'OPEN_CHAT';
     userData?: {
         name?: string;
@@ -18,7 +18,7 @@ export interface UserSession {
 export interface ChatRequest {
     sessionId: string;
     message: string;
-    userData?: { // Optional, can be sent directly
+    userData?: {
         name?: string;
         phoneNumber?: string;
     }

@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:widget": "tsc -b && vite build -c vite.widget.config.ts"
   },
   "dependencies": {
     "@tailwindcss/typography": "^0.5.19",

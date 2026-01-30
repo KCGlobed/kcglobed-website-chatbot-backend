@@ -86,7 +86,13 @@ To function correctly, the bot requires access to:
     *   *Config*: Host/Port defined in `.env`.
 3.  **Source Documents**:
     *   **PDF**: `kcg.pdf` in project root.
-    *   **Web**: URLs hardcoded in `src/scripts/ingest-web.ts`.
+    *   **Web**: URLs hardcoded in `src/scripts/ingest-web.ts`:
+        *   `https://www.kcglobed.com/`
+        *   `https://www.kcglobed.com/course/ea`
+        *   `https://www.kcglobed.com/course/cma`
+        *   `https://www.kcglobed.com/course/cpa`
+        *   `https://www.kcglobed.com/about-us`
+        *   `https://www.kcglobed.com/contactus`
 
 ---
 

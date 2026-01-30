@@ -23,7 +23,6 @@ The **KCG Bot Backend** is a sophisticated **RAG (Retrieval-Augmented Generation
 ## A-Z Guide: detailed Workflows
 
 ### 1. Project Initialization
-**Estimate**: 5-10 minutes
 *   **Step 1.1**: **Prerequisites Check**. Ensure Node.js (v18+) and npm (v9+) are installed.
 *   **Step 1.2**: **Clone Repository**. Get the code to your local machine.
 *   **Step 1.3**: **Backend Setup**.
@@ -38,7 +37,6 @@ The **KCG Bot Backend** is a sophisticated **RAG (Retrieval-Augmented Generation
     *   Add `OPENAI_API_KEY`, `CHROMA_HOST`, and `CHROMA_PORT`.
 
 ### 2. Data Ingestion (The "Knowledge Build")
-**Estimate**: 5-10 minutes (varies by network/data size)
 *   **Step 2.1**: **Ensure Database Availability**.
     *   Make sure your ChromaDB instance is running (local Docker container or cloud instance).
     *   *Check*: Verify connection to `http://localhost:8000`.
@@ -52,7 +50,6 @@ The **KCG Bot Backend** is a sophisticated **RAG (Retrieval-Augmented Generation
     *   *Time*: ~3-5 mins (depends on page count).
 
 ### 3. Running the Application
-**Estimate**: < 1 minute
 *   **Step 3.1**: **Start Backend**.
     *   **Command**: `npm run dev`
     *   **Action**: Starts Express server on port 3000 (default).
@@ -67,18 +64,18 @@ The **KCG Bot Backend** is a sophisticated **RAG (Retrieval-Augmented Generation
 
 ## Detailed Task Breakdown & Estimates
 
-| Category | Task | Micro-Step | Est. Time | Logic/Dependency |
-| :--- | :--- | :--- | :--- | :--- |
-| **Setup** | **Install Deps** | `npm install` (root) | 2 mins | Network IO (downloads packages) |
-| | | `cd client && npm install` | 2 mins | Network IO |
-| **Config** | **Env Setup** | Create `.env` file | 1 min | Manual copy-paste of API keys |
-| **Data** | **PDF Ingest** | Load PDF `src/scripts/ingest.ts` | 5s | Disk IO |
-| | | Split Text | 2s | CPU (Regex/String ops) |
-| | | Generate Embeddings | 30s | API Latency (OpenAI request) |
-| | | Upload to Chroma | 20s | Network/DB Latency |
-| **Data** | **Web Ingest** | Web Crawl `src/scripts/ingest-web.ts` | 60s+ | Network IO (Fetching HTML) |
-| | | Embed & Upload | 60s+ | API & DB Latency |
-| **Run** | **Start Dev** | `npm run dev` | 5s | Server startup |
+| Category | Task | Micro-Step | Logic/Dependency |
+| :--- | :--- | :--- | :--- |
+| **Setup** | **Install Deps** | `npm install` (root) | Network IO (downloads packages) |
+| | | `cd client && npm install` | Network IO |
+| **Config** | **Env Setup** | Create `.env` file | Manual copy-paste of API keys |
+| **Data** | **PDF Ingest** | Load PDF `src/scripts/ingest.ts` | Disk IO |
+| | | Split Text | CPU (Regex/String ops) |
+| | | Generate Embeddings | API Latency (OpenAI request) |
+| | | Upload to Chroma | Network/DB Latency |
+| **Data** | **Web Ingest** | Web Crawl `src/scripts/ingest-web.ts` | Network IO (Fetching HTML) |
+| | | Embed & Upload | API & DB Latency |
+| **Run** | **Start Dev** | `npm run dev` | Server startup |
 
 ---
 

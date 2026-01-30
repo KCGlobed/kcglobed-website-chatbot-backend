@@ -13,8 +13,6 @@ const rl = readline.createInterface({
 const chatService = new ChatService();
 const sessionId = uuidv4();
 
-console.log("Starting CMD Chatbot... (Type 'exit' to quit)");
-console.log("-----------------------------------------------");
 
 // Initial greeting
 chatService.handleMessage(sessionId, "").then(response => {

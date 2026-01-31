@@ -1,9 +1,10 @@
 # Base: Python for Chroma + Node for your TS server
 FROM python:3.11-slim
 
-# Install Node + npm
+# Install Node + npm + Puppeteer dependencies
 RUN apt-get update && \
-    apt-get install -y nodejs npm && \
+    apt-get install -y nodejs npm \
+    libnss3 libatk-bridge2.0-0 libx11-xcb1 libxcomposite1 libxcursor1 libxdamage1 libxi6 libxtst6 libcups2 libxss1 libxrandr2 libasound2 libpangocairo-1.0-0 libatk1.0-0 libgtk-3-0 libgbm1 && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/src/app

@@ -14,7 +14,7 @@ const urls = [
     "https://www.kcglobed.com/contactus"
 ];
 
-async function ingestWeb() {
+export async function ingestWeb() {
     console.log("Starting web ingestion...");
     const crawler = new WebCrawlerService();
     const splitter = new RecursiveCharacterTextSplitter({
@@ -42,4 +42,6 @@ async function ingestWeb() {
     console.log("Web ingestion complete!");
 }
 
-ingestWeb();
+if (require.main === module) {
+    ingestWeb();
+}

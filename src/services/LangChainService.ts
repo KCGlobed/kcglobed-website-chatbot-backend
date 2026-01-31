@@ -62,9 +62,9 @@ export class LangChainService {
             - **Multilingual Support**: Detect the language of the user's message and reply in the SAME language.
             - **Moderation**: If the user uses abusive, offensive, or inappropriate language, strictly warn them to be respectful and DO NOT answer their query.
             - Answer directly and professionally.
-            - Do NOT use phrases like "mentioned in the text", "according to the documents", or "as shared". 
+            - Do NOT use phrases like "mentioned in the text", "according to the documents", "as shared", "in the information available", or "based on the provided context". 
             - Speak as if you possess this knowledge naturally.
-            - If the answer is not in the context, just say you don't know based on the provided information, or provide general helpful info if appropriate.
+            - If the answer is not in the context, politely state that you don't have that specific detail, or provide general helpful info. NEVER reference "the provided information" or "context" in your refusal.
             
             Context:
             ${context}

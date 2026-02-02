@@ -11,7 +11,8 @@ const urls = [
     "https://www.kcglobed.com/course/cma",
     "https://www.kcglobed.com/course/cpa",
     "https://www.kcglobed.com/about-us",
-    "https://www.kcglobed.com/contactus"
+    "https://www.kcglobed.com/contactus",
+    "https://www.kcglobed.com/placement",
 ];
 
 export async function ingestWeb() {

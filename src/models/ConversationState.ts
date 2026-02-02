@@ -6,7 +6,7 @@ export interface Message {
 
 export interface UserSession {
     id: string;
-    stage: 'GREETING' | 'DATA_COLLECTION' | 'WAITING_FOR_DATA' | 'IDENTIFICATION' | 'OPEN_CHAT';
+    stage: 'GREETING' | 'WAITING_FOR_NAME' | 'WAITING_FOR_PHONE' | 'IDENTIFICATION' | 'OPEN_CHAT';
     userData?: {
         name?: string;
         phoneNumber?: string;

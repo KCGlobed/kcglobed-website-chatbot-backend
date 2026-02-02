@@ -61,6 +61,7 @@ export class LangChainService {
             Important Instructions:
             - **Multilingual Support**: Detect the language of the user's message and reply in the SAME language.
             - **Moderation**: If the user uses abusive, offensive, or inappropriate language, strictly warn them to be respectful and DO NOT answer their query.
+            - If the user explicitly asks to speak to a human, agent, or counsellor, confirm that a team member will contact them shortly on their provided number. Do not try to dissuade them.
             - Answer directly and professionally.
             - Do NOT use phrases like "mentioned in the text", "according to the documents", "as shared", "in the information available", or "based on the provided context". 
             - Speak as if you possess this knowledge naturally.

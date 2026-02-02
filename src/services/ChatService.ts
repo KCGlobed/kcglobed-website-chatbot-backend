@@ -29,46 +29,61 @@ export class ChatService {
     async handleMessage(sessionId: string, messageText: string, providedUserData?: any): Promise<ChatResponse> {
         const session = this.getOrCreateSession(sessionId);
         if (session.messages.length === 0 && session.stage === 'GREETING') {
-            const greeting = "Hey! 👋 Welcome to KC GlobEd!\nI’m KC GlobEd Bot, here to guide you through courses, admissions, classes, and more.\nAsk me anything — I’m here 24/7!\n\nHow can I help you today?";
+            const greeting = "Hey! 👋 Welcome to KC GlobEd!\nI’m KC GlobEd Bot, here to guide you through courses, admissions, classes, and more.\nAsk me anything — I’m here 24/7!\n\nTo get started, what is your Name?";
 
             session.messages.push({ role: 'assistant', content: greeting });
-            session.stage = 'DATA_COLLECTION';
+            session.stage = 'WAITING_FOR_NAME';
 
             return {
                 message: greeting,
             };
         }
 
-        if (session.stage === 'DATA_COLLECTION') {
-            session.messages.push({ role: 'user', content: messageText })
-            const askDataMsg = "Before we proceed, please enter your Name and Phone Number (e.g., John Doe, 9876543210).";
-            session.messages.push({ role: 'assistant', content: askDataMsg });
-            session.stage = 'WAITING_FOR_DATA';
-            return { message: askDataMsg };
-        }
-
-        if (session.stage === 'WAITING_FOR_DATA') {
+        if (session.stage === 'WAITING_FOR_NAME') {
             session.messages.push({ role: 'user', content: messageText });
 
-            // VALIDATION LOGIC
-            // Simple heuristic to extract phone and name
-            // Looking for a sequence of digits for phone
+            // Name validation: Check if empty or too short
+            const cleanedName = messageText.trim();
+            if (cleanedName.length < 2) {
+                const errorMsg = "Please enter a valid Name (at least 2 characters).";
+                session.messages.push({ role: 'assistant', content: errorMsg });
+                return { message: errorMsg };
+            }
+
+            // Check if user accidentally entered a phone number here
+            if (/\d{10,}/.test(cleanedName)) {
+                const errorMsg = "It looks like you entered a phone number. Please enter your Name first.";
+                session.messages.push({ role: 'assistant', content: errorMsg });
+                return { message: errorMsg };
+            }
+
+            if (!session.userData) session.userData = {};
+            session.userData.name = cleanedName;
+
+            const askPhoneMsg = `Thanks ${cleanedName}! Now, what is your Phone Number?`;
+            session.messages.push({ role: 'assistant', content: askPhoneMsg });
+            session.stage = 'WAITING_FOR_PHONE';
+            return { message: askPhoneMsg };
+        }
+
+        if (session.stage === 'WAITING_FOR_PHONE') {
+            session.messages.push({ role: 'user', content: messageText });
+
+            // Phone validation: Look for at least 10 digits
             const phoneMatch = messageText.match(/\b\d{10,}\b/);
 
-            // Assume the part that isn't the phone number is the name
-            const namePart = messageText.replace(/\b\d{10,}\b/, '').replace(/[^a-zA-Z\s]/g, '').trim();
-
-            if (phoneMatch && namePart.length > 2) {
+            if (phoneMatch) {
                 const phoneNumber = phoneMatch[0];
-                const name = namePart;
-
-                session.userData = { name, phoneNumber };
+                if (!session.userData) session.userData = {};
+                session.userData.phoneNumber = phoneNumber;
 
                 // Store in DB
-                await this.dbService.saveUser(name, phoneNumber);
+                if (session.userData.name) {
+                    await this.dbService.saveUser(session.userData.name, phoneNumber);
+                }
 
-                const uniqueOptions = ["Explore Courses", "Apply for Admission", "Access LMS / Student Login", "Talk to a counsellor", "Ask a Question"];
-                const msg = `Thanks ${name}! Please select an option below:`;
+                const uniqueOptions = ["Explore Courses", "Apply for Admission", "Access LMS / Student Login", "Ask a Question"];
+                const msg = `Perfect! How can I help you today? Please select an option below:`;
 
                 session.messages.push({ role: 'assistant', content: msg, options: uniqueOptions });
                 session.stage = 'IDENTIFICATION';
@@ -78,7 +93,7 @@ export class ChatService {
                     options: uniqueOptions
                 };
             } else {
-                const errorMsg = "Please provide a valid Name (at least 3 letters) and a Phone Number (at least 10 digits).";
+                const errorMsg = "Please enter a valid Phone Number (at least 10 digits).";
                 session.messages.push({ role: 'assistant', content: errorMsg });
                 return { message: errorMsg };
             }
@@ -86,15 +101,23 @@ export class ChatService {
 
         if (session.stage === 'IDENTIFICATION') {
             session.messages.push({ role: 'user', content: messageText });
-            if (messageText.includes("LMS") || messageText.includes("Login")) {
+
+            const lowerMessage = messageText.toLowerCase();
+
+            if (lowerMessage.includes("lms") || lowerMessage.includes("login")) {
                 session.userData!.userType = 'existing';
                 const response = "As an existing student, do you need help with your login or course materials?";
                 session.messages.push({ role: 'assistant', content: response });
                 session.stage = 'OPEN_CHAT';
                 return { message: response };
-            } else if (messageText.includes("Explore") || messageText.includes("Admission") || messageText.includes("counsellor")) {
+            } else if (lowerMessage.includes("explore") || lowerMessage.includes("admission")) {
                 session.userData!.userType = 'new';
                 const response = "Great! We can help you with admissions and guidance. What course are you interested in?";
+                session.messages.push({ role: 'assistant', content: response });
+                session.stage = 'OPEN_CHAT';
+                return { message: response };
+            } else if (lowerMessage.includes("counsellor") || lowerMessage.includes("person") || lowerMessage.includes("human") || lowerMessage.includes("agent") || lowerMessage.includes("call") || lowerMessage.includes("talk to")) {
+                const response = "I have noted your request. Our executive will connect with you shortly on your registered phone number to assist you further. Is there anything else I can help you with?";
                 session.messages.push({ role: 'assistant', content: response });
                 session.stage = 'OPEN_CHAT';
                 return { message: response };

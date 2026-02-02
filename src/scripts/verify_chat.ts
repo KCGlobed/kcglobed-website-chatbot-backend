@@ -22,7 +22,7 @@ async function sendMessage(message: string, expectedContent?: string) {
         }
         return botMessage;
     } catch (error) {
-        console.error("Error:", error.message);
+        console.error("Error:", (error as Error).message);
     }
 }
 

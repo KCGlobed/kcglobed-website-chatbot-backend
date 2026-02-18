@@ -1,5 +1,5 @@
 import { LangChainService } from "./LangChainService";
-import { UserSession, ChatRequest, ChatResponse, Message } from "../models/ConversationState";
+import { UserSession, ChatResponse } from "../models/ConversationState";
 
 import { DatabaseService } from "./DatabaseService";
 

@@ -23,6 +23,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "langchain": "^0.1.37",
+    "mammoth": "^1.11.0",
     "open": "^11.0.0",
     "pdf-parse": "^1.1.1",
     "puppeteer": "^19.11.1",

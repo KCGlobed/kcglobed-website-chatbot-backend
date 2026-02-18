@@ -22,8 +22,6 @@ export async function ingestFiles() {
 
     for (const file of filesToIngest) {
         const absolutePath = path.join(__dirname, file.path);
-        console.log(`Processing ${path.basename(absolutePath)}...`);
-
         try {
             let loader;
             if (file.type === "pdf") {

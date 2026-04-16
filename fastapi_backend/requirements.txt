@@ -10,3 +10,6 @@ aiosqlite
 httpx
 PyPDF2
 chromadb
+motor
+dnspython
+certifi

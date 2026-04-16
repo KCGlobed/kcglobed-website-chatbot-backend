@@ -1,0 +1,13 @@
+#!/usr/bin/expect -f
+spawn .venv/bin/python3 -m fastapi_backend.scripts.cmd_chat
+expect "How can I help you today?"
+send "hi\r"
+expect "Before we proceed"
+send "suneel, 9876543210\r"
+expect "Please select an option below"
+send "Explore Courses\r"
+expect "How can I help you regarding our educational programs?"
+send "what courses do you offer?\r"
+expect "Bot:"
+send "exit\r"
+expect eof

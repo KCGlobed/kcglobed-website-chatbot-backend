@@ -1,0 +1,62 @@
+INFO:     Will watch for changes in these directories: ['/Users/suneelrajput/Desktop/kcg/kcglobed-website-chatbot-backend']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [7944] using WatchFiles
+INFO:     Started server process [8017]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+{"event": "HTTP_REQUEST", "method": "GET", "route": "http://127.0.0.1:8000/health", "status": 200, "ip": "127.0.0.1", "userAgent": "curl/8.7.1", "durationMs": 1.23, "time": "2026-03-29T00:07:47.596586"}
+INFO:     127.0.0.1:54748 - "GET /health HTTP/1.1" 200 OK
+{"event": "HTTP_REQUEST", "method": "POST", "route": "http://127.0.0.1:8000/api/chat", "status": 200, "ip": "127.0.0.1", "userAgent": "curl/8.7.1", "durationMs": 1.35, "time": "2026-03-29T00:08:12.381166"}
+INFO:     127.0.0.1:54751 - "POST /api/chat HTTP/1.1" 200 OK
+{"event": "HTTP_REQUEST", "method": "POST", "route": "http://127.0.0.1:8000/api/chat", "status": 200, "ip": "127.0.0.1", "userAgent": "curl/8.7.1", "durationMs": 0.77, "time": "2026-03-29T00:08:56.055842"}
+INFO:     127.0.0.1:54767 - "POST /api/chat HTTP/1.1" 200 OK
+User saved: John Doe, 9988776655
+{"event": "HTTP_REQUEST", "method": "POST", "route": "http://127.0.0.1:8000/api/chat", "status": 200, "ip": "127.0.0.1", "userAgent": "curl/8.7.1", "durationMs": 2.73, "time": "2026-03-29T00:09:02.693362"}
+INFO:     127.0.0.1:54773 - "POST /api/chat HTTP/1.1" 200 OK
+{"event": "HTTP_REQUEST", "method": "GET", "route": "http://localhost:8000/", "status": 404, "ip": "127.0.0.1", "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:149.0) Gecko/20100101 Firefox/149.0", "durationMs": 0.28, "time": "2026-03-29T00:10:08.579279"}
+INFO:     127.0.0.1:54784 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  WatchFiles detected changes in 'fastapi_backend/scripts/ingest.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [8017]
+INFO:     Started server process [9618]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'fastapi_backend/scripts/ingest.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [9618]
+INFO:     Started server process [9626]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'fastapi_backend/scripts/ingest.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [9626]
+INFO:     Started server process [9635]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'fastapi_backend/scripts/ingest.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [9635]
+INFO:     Started server process [9644]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'fastapi_backend/scripts/cmd_chat.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [9644]
+INFO:     Started server process [10355]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [10355]
+INFO:     Stopping reloader process [7944]

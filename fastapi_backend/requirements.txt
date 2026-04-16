@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+langchain
+langchain-community
+langchain-openai
+langchain-chroma
+pydantic
+python-dotenv
+aiosqlite
+httpx
+PyPDF2
+chromadb
+motor
+dnspython
+certifi
